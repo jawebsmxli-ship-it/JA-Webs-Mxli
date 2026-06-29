@@ -1,0 +1,60 @@
+# 🌐 JA Webs — Sistemas Digitales que Venden
+
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000?style=flat&logo=vercel&logoColor=white)](https://ja-webs.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Made with ❤️ in Mexicali](https://img.shields.io/badge/Made%20with-❤️%20in%20Mexicali-purple)](https://ja-webs.vercel.app)
+
+> **Landing page oficial de JA Webs** — Agencia digital especializada en construir sistemas digitales que venden. No hacemos páginas bonitas, construimos activos digitales que generan clientes.
+
+---
+
+## 📋 Tabla de Contenidos
+
+- [🚀 Demo en Vivo](#-demo-en-vivo)
+- [✨ Características](#-características)
+- [🛠️ Tecnologías](#️-tecnologías)
+- [📁 Estructura del Proyecto](#-estructura-del-proyecto)
+- [⚙️ Instalación y Uso](#️-instalación-y-uso)
+- [📦 Despliegue en Vercel](#-despliegue-en-vercel)
+- [📄 Licencia](#-licencia)
+- [📞 Contacto](#-contacto)
+
+---
+
+## 🚀 Demo en Vivo
+
+🔗 **Visita la página:** [https://ja-webs.vercel.app](https://ja-webs.vercel.app)
+
+> *Nota: El dominio personalizado estará disponible próximamente.*
+
+---
+
+## ✨ Características
+
+| Característica | Descripción |
+|----------------|-------------|
+| 📱 **Responsivo 100%** | Se adapta a cualquier dispositivo (móvil, tablet, desktop) |
+| 🎨 **Diseño oscuro premium** | Con gradientes neón y efectos de glow modernos |
+| ⚡ **Rendimiento optimizado** | Carga rápida gracias a Vercel y buenas prácticas |
+| 🔍 **SEO Ready** | Metaetiquetas, Open Graph y estructura semántica |
+| 📋 **Formulario de cotización** | Con validación y envío directo por WhatsApp |
+| 💬 **WhatsApp flotante** | Botón de contacto siempre visible |
+| 🧩 **Secciones completas** | Servicios, paquetes, hosting, campañas, FAQ y más |
+| ♿ **Accesibilidad** | Foco visible y soporte para movimiento reducido |
+
+---
+
+## 🛠️ Tecnologías
+
+| Tecnología | Uso |
+|------------|-----|
+| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) | Estructura de la página |
+| ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) | Estilos y diseño responsivo |
+| ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black) | Interacciones y lógica del formulario |
+| ![Font Awesome](https://img.shields.io/badge/Font_Awesome-339AF0?style=flat&logo=fontawesome&logoColor=white) | Íconos y elementos visuales |
+| ![Google Fonts](https://img.shields.io/badge/Google_Fonts-4285F4?style=flat&logo=google&logoColor=white) | Tipografía (Space Grotesk + Inter) |
+| ![Vercel](https://img.shields.io/badge/Vercel-000?style=flat&logo=vercel&logoColor=white) | Hosting y despliegue continuo |
+
+---
+
+## 📁 Estructura del Proyecto
