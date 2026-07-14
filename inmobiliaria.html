@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JA Inmobiliaria & Eventos - Premium Experience</title>
+    <!-- Librerías de Vanguardia para Iconos y Animaciones Fluidas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg-ultra-dark: #040209;
+            --neon-purple: #7b2cff;
+            --neon-cyan: #00f3ff;
+            --glass-card: rgba(10, 7, 20, 0.6);
+            --border-glow: rgba(123, 44, 255, 0.2);
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-ultra-dark);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* CANVAS MOTOR DE PARTÍCULAS FONDO */
+        canvas#particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.25;
+        }
+
+        .aurora-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blur-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+        }
+        .orb-1 { width: 600px; height: 600px; background: var(--neon-purple); top: -10%; left: -10%; }
+        .orb-2 { width: 500px; height: 500px; background: var(--neon-cyan); bottom: -10%; right: -10%; }
+
+        /* ESTRUCTURA RESPONSIVA DE ESCRITORIO */
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px 100px 20px;
+        }
+
+        .back-bar {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass-card);
+            border: 1px solid var(--border-glow);
+            color: #d1ccfa;
+            text-decoration: none;
+            font-size: 9.5pt;
+            font-weight: 700;
+            padding: 9px 18px;
+            border-radius: 30px;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        .back-link:hover {
+            color: var(--neon-cyan);
+            border-color: rgba(0, 243, 255, 0.4);
+            background: rgba(0, 243, 255, 0.06);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
+        }
+
+        .brand-title {
+            font-size: 26pt;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff, #d8c2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--neon-cyan);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 9pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+        }
+
+        .section-title {
+            font-size: 16pt;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #c5afff;
+            margin: 50px 0 25px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(123, 44, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        /* GRID RESPONSIVO: 3 Columnas en PC, 2 en Tablet, 1 en Celular */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 650px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+
+        /* TARJETAS PREMIUM DE CATÁLOGO */
+        .product-card {
+            background: var(--glass-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(0, 243, 255, 0.4);
+            box-shadow: 0 25px 50px rgba(123, 44, 255, 0.15);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            opacity: 0.85;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.06);
+            opacity: 1;
+        }
+
+        .price-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(4, 2, 9, 0.85);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 12pt;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .info-container {
+            padding: 24px;
+        }
+
+        .prod-title {
+            font-size: 15pt;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .prod-location {
+            font-size: 10pt;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .prod-specs {
+            display: flex;
+            gap: 20px;
+            font-size: 10pt;
+            color: #d1ccfa;
+            font-weight: 500;
+        }
+
+        .prod-specs i {
+            color: var(--neon-cyan);
+        }
+
+        /* MODAL DE DESCRIPCIÓN ESCRITORIO (GLASSMORPHISM) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 2, 9, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: #0f0b1e;
+            border: 1px solid var(--border-glow);
+            border-radius: 28px;
+            padding: 0 35px 35px 35px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            position: relative;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(123,44,255,0.4) transparent;
+        }
+
+        .modal-card::-webkit-scrollbar { width: 6px; }
+        .modal-card::-webkit-scrollbar-thumb { background: rgba(123,44,255,0.4); border-radius: 10px; }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            background: rgba(4, 2, 9, 0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 10;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* GALERÍA DE IMÁGENES DEL PRODUCTO */
+        .modal-gallery {
+            position: relative;
+            width: calc(100% + 70px);
+            margin: 0 -35px 22px -35px;
+            height: 300px;
+            background: #000;
+            border-radius: 28px 28px 0 0;
+            overflow: hidden;
+        }
+
+        .gallery-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #111;
+        }
+
+        .modal-gallery::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 60%;
+            background: linear-gradient(to top, rgba(15, 11, 30, 0.95), transparent);
+            pointer-events: none;
+        }
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(4, 2, 9, 0.55);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .gallery-arrow:hover {
+            background: rgba(0, 243, 255, 0.25);
+        }
+
+        .gallery-prev { left: 16px; }
+        .gallery-next { right: 16px; }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 14px;
+            right: 20px;
+            background: rgba(4, 2, 9, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--neon-cyan);
+            font-size: 9pt;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            z-index: 5;
+            backdrop-filter: blur(6px);
+        }
+
+        .gallery-thumbs {
+            position: absolute;
+            bottom: 14px;
+            left: 20px;
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .gallery-dot.active {
+            background: var(--neon-cyan);
+            width: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+        }
+
+        .modal-desc {
+            font-size: 11pt;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin: 20px 0 25px 0;
+        }
+
+        /* CUESTIONARIO ADAPTADO 360° */
+        .form-card {
+            background: var(--glass-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 28px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #bca5ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            color: white;
+            font-size: 11pt;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--neon-cyan);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.25);
+        }
+
+        .form-group select option {
+            background: #0f0b1e;
+            color: white;
+        }
+
+        /* BOTONES PREMIUM */
+        .btn-premium {
+            width: 100%;
+            padding: 16px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 700;
+            font-size: 11.5pt;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(90deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-submit {
+            background: linear-gradient(90deg, var(--neon-purple), #5b10e6);
+            color: white;
+            box-shadow: 0 8px 25px rgba(123, 44, 255, 0.3);
+            grid-column: span 2;
+            width: auto;
+            max-width: 350px;
+            margin: 10px auto 0 auto;
+            padding: 16px 50px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-submit { grid-column: span 1; width: 100%; }
+        }
+
+        /* BOTÓN FLOTANTE FIJO */
+        .sticky-whatsapp {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            width: 60px;
+            height: 60px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24pt;
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+            z-index: 90;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .sticky-whatsapp:hover {
+            transform: scale(1.08);
+        }
+
+        /* ===========================================
+        AJUSTES RESPONSIVE ADICIONALES (MÓVIL)
+        =========================================== */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 24px 16px 90px 16px;
+            }
+            .back-bar {
+                margin-bottom: 16px;
+            }
+            .back-link {
+                font-size: 8.5pt;
+                padding: 8px 14px;
+            }
+            .brand-title {
+                font-size: 20pt;
+            }
+            .logo {
+                max-width: 90px;
+            }
+            .section-title {
+                font-size: 13pt;
+                margin: 36px 0 18px 0;
+                gap: 8px;
+            }
+            .products-grid {
+                gap: 18px;
+            }
+            .img-container {
+                height: 190px;
+            }
+            .prod-title {
+                font-size: 13pt;
+            }
+            .form-card {
+                padding: 26px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-card {
+                padding: 0 18px 24px 18px;
+                border-radius: 22px;
+            }
+            .modal-gallery {
+                width: calc(100% + 36px);
+                margin: 0 -18px 18px -18px;
+                height: 220px;
+                border-radius: 22px 22px 0 0;
+            }
+            .modal-close {
+                top: 14px;
+                right: 14px;
+                width: 32px;
+                height: 32px;
+            }
+            .sticky-whatsapp {
+                width: 52px;
+                height: 52px;
+                font-size: 20pt;
+                bottom: 20px;
+                right: 20px;
+            }
+            .prod-specs {
+                font-size: 9pt;
+                gap: 14px;
+            }
+            .price-badge {
+                font-size: 10.5pt;
+                padding: 6px 12px;
+                bottom: 14px;
+                right: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    
+    <!-- PARTICULAS Y AURORAS INTEGRADAS -->
+    <canvas id="particleCanvas"></canvas>
+    <div class="aurora-bg">
+        <div class="blur-orb orb-1"></div>
+        <div class="blur-orb orb-2"></div>
+    </div>
+
+    <!-- BARRA DE REGRESO A JA WEBS -->
+    <div class="back-bar">
+        <a href="index.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Volver a JA Webs
+        </a>
+    </div>
+
+    <!-- HEADER DE LA MARCA -->
+    <div class="brand-header">
+        <img src="logo.png" alt="JA Inmobiliaria" class="logo">
+        <div class="brand-title">JA Inmobiliaria & Eventos</div>
+        <div><span class="badge">Luxury Platform 360°</span></div>
+    </div>
+
+    <!-- =========================================
+    SECCIÓN 1: VENTA DE CASAS (10 propiedades)
+    ========================================= -->
+    <div class="section-title">
+        <i class="fa-solid fa-key"></i> Residencias en Venta
+    </div>
+    <div class="products-grid">
+        <!-- 1. Existente -->
+        <div class="product-card" onclick="openDetails('Residencial San Pedro Premium', '$7,200,000 MXN', 'Exclusiva residencia en una de las zonas de mayor plusvalía. Cuenta con acabados de mármol pulido, cocina integral inteligente de cuarzo, alberca automatizada y sistema de refrigeración central zonificado.', '3', '4.5', ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="product-img" alt="San Pedro">
+                <div class="price-badge">$7.2M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencial San Pedro Premium</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> San Pedro Residencial, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 4.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Existente -->
+        <div class="product-card" onclick="openDetails('Penthouse Aura Dorada', '$4,100,000 MXN', 'Espectacular penthouse con vista panorámica a la ciudad. Equipado con domótica avanzada para control de persianas, audio e iluminación mediante comandos de voz.', '2', '2.5', ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Aura Dorada">
+                <div class="price-badge">$4.1M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Penthouse Aura Dorada</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Zona Dorada, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 2 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Existente -->
+        <div class="product-card" onclick="openDetails('Villa Toscana Smart Home', '$5,900,000 MXN', 'Villa moderna de doble altura con sistema de seguridad perimetral avanzado, cochera para 3 autos, cuarto de servicio y acabados minimalistas de alta gama.', '4', '4', ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Villa Toscana">
+                <div class="price-badge">$5.9M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Villa Toscana Smart Home</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Calzada Cetys, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 4 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 4 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Existente -->
+        <div class="product-card" onclick="openDetails('Casa Minimalista Vista Hermosa', '$4,800,000 MXN', 'Casa de estilo minimalista con amplios ventanales, jardín interior decorativo, cocina premium de cuarzo y preparación estructural para una tercera planta.', '3', '3.5', ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Vista Hermosa">
+                <div class="price-badge">$4.8M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Casa Minimalista Vista Hermosa</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Montecarlo, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 3.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Nuevo -->
+        <div class="product-card" onclick="openDetails('Residencia Los Portales', '$6,500,000 MXN', 'Lujosa residencia con acabados italianos de mármol y madera de olivo. Cuenta con alberca climatizada, gimnasio privado y sistema de sonido envolvente.', '4', '3.5', ['https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Los Portales">
+                <div class="price-badge">$6.5M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencia Los Portales</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Av. Los Portales, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 4 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 3.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Nuevo -->
+        <div class="product-card" onclick="openDetails('Villa Montecarlo', '$8,200,000 MXN', 'Villa de lujo con alberca olímpica, cancha de tenis y amplios jardines. Diseño contemporáneo con domótica de última generación.', '5', '5', ['https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Montecarlo">
+                <div class="price-badge">$8.2M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Villa Montecarlo</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Montecarlo, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 5 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Nuevo -->
+        <div class="product-card" onclick="openDetails('Casa del Lago', '$5,300,000 MXN', 'Casa frente a lago artificial con diseño contemporáneo. Terraza panorámica, cocina abierta y cuarto de servicio independiente.', '3', '3', ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Casa del Lago">
+                <div class="price-badge">$5.3M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Casa del Lago</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Laguna Park, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 3 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Nuevo -->
+        <div class="product-card" onclick="openDetails('Penthouse Centenario', '$4,900,000 MXN', 'Penthouse con terraza privada de 80 m² y vista de 360° a la ciudad. Acabados de lujo, cocina integral con isla y baño principal con hidromasaje.', '2', '2', ['https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Centenario">
+                <div class="price-badge">$4.9M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Penthouse Centenario</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Centro Histórico, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 2 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Nuevo -->
+        <div class="product-card" onclick="openDetails('Residencial Santa Fe', '$7,800,000 MXN', 'Residencia de lujo con domótica avanzada, jardín zen, alberca con cascada y cuarto de televisión. Cochera para 4 autos.', '4', '4.5', ['https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Santa Fe">
+                <div class="price-badge">$7.8M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencial Santa Fe</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Santa Fe, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 4 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 4.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. Nuevo -->
+        <div class="product-card" onclick="openDetails('Casa Jardín Real', '$6,100,000 MXN', 'Casa con amplio jardín, alberca climatizada y palapa. Acabados de cantera, pisos de porcelanato y sistema de riego automático.', '3', '3', ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Jardín Real">
+                <div class="price-badge">$6.1M MXN</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Casa Jardín Real</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Jardines de Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 3 Baños</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+    SECCIÓN 2: RENTA DE CASAS (10 propiedades)
+    ========================================= -->
+    <div class="section-title">
+        <i class="fa-solid fa-house-user"></i> Residencias en Renta
+    </div>
+    <div class="products-grid">
+        <!-- 1. Existente -->
+        <div class="product-card" onclick="openDetails('Residencial Puerta de Hierro', '$32,000 MXN / Mes', 'Hermosa propiedad en renta, completamente amueblada y equipada. Cuenta con refrigeración de alta eficiencia, patio con asador de granito y seguridad en fraccionamiento privado.', '3', '2.5', ['https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Puerta de Hierro">
+                <div class="price-badge">$32K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencial Puerta de Hierro</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Puerta de Hierro, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Existente -->
+        <div class="product-card" onclick="openDetails('Loft Ejecutivo Centro Cívico', '$18,500 MXN / Mes', 'Loft ejecutivo ideal para profesionistas o empresas. Ubicado en el corazón corporativo, totalmente amueblado, servicios inteligentes y cajón de estacionamiento techado.', '1', '1.5', ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Loft Ejecutivo">
+                <div class="price-badge">$18.5K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Loft Ejecutivo Centro Cívico</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Centro Cívico, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 1 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 1.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Existente -->
+        <div class="product-card" onclick="openDetails('Condominio Alcazar', '$24,000 MXN / Mes', 'Condominio moderno con amenidades exclusivas de casa club, gimnasio y alberca comunitaria. Equipado con electrodomésticos de acero inoxidable de alta gama.', '2', '2', ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Condominio Alcazar">
+                <div class="price-badge">$24K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Condominio Alcazar</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Calzada Independencia, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 2 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Existente -->
+        <div class="product-card" onclick="openDetails('Residencial Villafontana', '$21,500 MXN / Mes', 'Casa habitacional lista para habitar. Espacios amplios, cocina de encino, patio trasero seguro e instalación optimizada para minisplits en cada habitación.', '3', '2', ['https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Villafontana">
+                <div class="price-badge">$21.5K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencial Villafontana</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Villafontana, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Nuevo -->
+        <div class="product-card" onclick="openDetails('Apartamento Ejecutivo Torres del Sol', '$28,500 MXN / Mes', 'Apartamento de lujo con gimnasio, alberca y roof garden. Totalmente amueblado con diseño vanguardista y domótica.', '2', '2', ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Torres del Sol">
+                <div class="price-badge">$28.5K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Apartamento Ejecutivo Torres del Sol</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Torres del Sol, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 2 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Nuevo -->
+        <div class="product-card" onclick="openDetails('Residencia Los Olivos', '$35,000 MXN / Mes', 'Casa amueblada con diseño moderno, jardín amplio, asador de ladrillo y sistema de seguridad. Ideal para familias.', '4', '3.5', ['https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Los Olivos">
+                <div class="price-badge">$35K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Residencia Los Olivos</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Los Olivos, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 4 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 3.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Nuevo -->
+        <div class="product-card" onclick="openDetails('Loft Urban Center', '$19,000 MXN / Mes', 'Loft minimalista con acabados de alta calidad, piso de madera, cocina americana y ventanales que inundan de luz.', '1', '1', ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Urban Center">
+                <div class="price-badge">$19K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Loft Urban Center</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Zona Urbana, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 1 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 1 Baño</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Nuevo -->
+        <div class="product-card" onclick="openDetails('Condominio Mirador', '$26,000 MXN / Mes', 'Condominio con vista panorámica, alberca y gimnasio. Amplias recámaras, closets de lujo y cocina integral.', '3', '2.5', ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Mirador">
+                <div class="price-badge">$26K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Condominio Mirador</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Mirador, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 3 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2.5 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Nuevo -->
+        <div class="product-card" onclick="openDetails('Casa Hacienda', '$38,000 MXN / Mes', 'Casa estilo colonial con amplios espacios, jardín con fuente, cocina de leña y capilla privada. Perfecta para eventos familiares.', '5', '4', ['https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Hacienda">
+                <div class="price-badge">$38K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Casa Hacienda</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Hacienda de Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 5 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 4 Baños</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. Nuevo -->
+        <div class="product-card" onclick="openDetails('Departamento Céntrico', '$22,000 MXN / Mes', 'Departamento completamente equipado, con seguridad 24/7, estacionamiento y cercanía a zonas comerciales.', '2', '2', ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Céntrico">
+                <div class="price-badge">$22K / Mes</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Departamento Céntrico</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Centro, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-bed"></i> 2 Rec.</span>
+                    <span><i class="fa-solid fa-bath"></i> 2 Baños</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+    SECCIÓN 3: JARDINES PARA EVENTOS (10 propiedades)
+    ========================================= -->
+    <div class="section-title">
+        <i class="fa-solid fa-champagne-glasses"></i> Jardines para Eventos
+    </div>
+    <div class="products-grid">
+        <!-- 1. Existente -->
+        <div class="product-card" onclick="openDetails('Jardín Esmeralda Luxury', '$25,000 MXN / Evento', 'Exclusivo jardín con capacidad para 400 personas. Incluye carpa arquitectónica elegante, pista de baile iluminada de cristal, suite privada para festejados y planta eléctrica de emergencia.', '400', 'Pax', ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Jardín Esmeralda">
+                <div class="price-badge">$25K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Jardín Esmeralda Luxury</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Av. Gral. Venustiano Carranza, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 400 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Existente -->
+        <div class="product-card" onclick="openDetails('Quinta Las Palmas Loft & Pool', '$15,000 MXN / Evento', 'Estilo campestre ideal para albercadas, graduaciones o bodas íntimas. Área techada con asador, alberca tipo infinito con iluminación LED y áreas verdes fotogénicas.', '200', 'Pax', ['https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Quinta Las Palmas">
+                <div class="price-badge">$15K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Quinta Las Palmas Loft & Pool</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Ahumadita, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 200 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Existente -->
+        <div class="product-card" onclick="openDetails('Finca Borghese Gala Eventos', '$35,000 MXN / Evento', 'Finca señorial premium de gran gala. Extensos jardines perfectamente podados, fuentes iluminadas, cocina industrial para banqueteras y estacionamiento privado para 150 vehículos.', '600', 'Pax', ['https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Finca Borghese">
+                <div class="price-badge">$35K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Finca Borghese Gala Eventos</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Carretera a San Felipe, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 600 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Existente -->
+        <div class="product-card" onclick="openDetails('Terraza Eclipse Lounge', '$12,000 MXN / Evento', 'Espacio moderno con jardín vertical y barra minimalista. Ideal para eventos corporativos, aniversarios y fiestas tipo cóctel con iluminación decorativa aérea.', '150', 'Pax', ['https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Terraza Eclipse">
+                <div class="price-badge">$12K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Terraza Eclipse Lounge</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Novelistas, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 150 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Nuevo -->
+        <div class="product-card" onclick="openDetails('Jardín del Valle', '$20,000 MXN / Evento', 'Amplias áreas verdes, lago artificial con patos, carpa elegante y zona de juegos infantiles. Ideal para bodas campestres.', '300', 'Pax', ['https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Jardín del Valle">
+                <div class="price-badge">$20K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Jardín del Valle</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Valle de Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 300 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Nuevo -->
+        <div class="product-card" onclick="openDetails('Quinta Los Encinos', '$30,000 MXN / Evento', 'Quinta con salón de eventos climatizado, jardines cuidados, estacionamiento amplio y cocina industrial. Perfecta para grandes celebraciones.', '500', 'Pax', ['https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Los Encinos">
+                <div class="price-badge">$30K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Quinta Los Encinos</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Carretera a San Luis, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 500 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Nuevo -->
+        <div class="product-card" onclick="openDetails('Terraza Azul', '$14,000 MXN / Evento', 'Terraza moderna con vista al atardecer, barra de coctelería, iluminación LED y mobiliario contemporáneo. Ideal para eventos sociales y corporativos.', '180', 'Pax', ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Terraza Azul">
+                <div class="price-badge">$14K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Terraza Azul</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Colonia Azul, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 180 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Nuevo -->
+        <div class="product-card" onclick="openDetails('Jardín Botánico', '$22,000 MXN / Evento', 'Entorno natural con vegetación exótica, senderos iluminados y una cascada artificial. Cuenta con área de ceremonias y salón de usos múltiples.', '250', 'Pax', ['https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Jardín Botánico">
+                <div class="price-badge">$22K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Jardín Botánico</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Jardín Botánico, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 250 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Nuevo -->
+        <div class="product-card" onclick="openDetails('Finca La Esmeralda', '$40,000 MXN / Evento', 'Finca de lujo con jardines cuidados al estilo francés, salón de baile con pista de cristal, y zona de barbacoa. Capacidad para grandes eventos.', '700', 'Pax', ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop" class="product-img" alt="La Esmeralda">
+                <div class="price-badge">$40K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Finca La Esmeralda</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Km 12 Carretera a San Felipe</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 700 Pax</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. Nuevo -->
+        <div class="product-card" onclick="openDetails('Patio Andaluz', '$18,000 MXN / Evento', 'Patio estilo andaluz con fuentes, arcos de herrería y jardines de azulejos. Ambiente íntimo y romántico para bodas y cenas de gala.', '200', 'Pax', ['https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1465256410760-10485d5be681?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=600&auto=format&fit=crop','https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=600&auto=format&fit=crop'])">
+            <div class="img-container">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600&auto=format&fit=crop" class="product-img" alt="Patio Andaluz">
+                <div class="price-badge">$18K / Evento</div>
+            </div>
+            <div class="info-container">
+                <div class="prod-title">Patio Andaluz</div>
+                <div class="prod-location"><i class="fa-solid fa-location-dot"></i> Colonia Andaluz, Mexicali</div>
+                <div class="prod-specs">
+                    <span><i class="fa-solid fa-users"></i> Capacidad: 200 Pax</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+    CUESTIONARIO DE SEGMENTACIÓN 360° ADAPTADO
+    ========================================= -->
+    <div class="section-title">
+        <i class="fa-solid fa-clipboard-question"></i> Calificadora de Requerimientos
+    </div>
+    <div class="form-card">
+        <form id="luxuryForm" onsubmit="sendForm(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="clientName">Nombre Completo</label>
+                    <input type="text" id="clientName" placeholder="Ej. Jonathan Angulo" required>
+                </div>
+                <div class="form-group">
+                    <label for="searchType">Tipo de Servicio Solicitado</label>
+                    <select id="searchType" required onchange="adaptBudgetOptions()">
+                        <option value="Comprar Casa">Comprar Casa Residencial</option>
+                        <option value="Rentar Casa">Rentar Casa Habitación</option>
+                        <option value="Reservar Jardín">Reservar Jardín para Eventos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="budgetRange">Presupuesto o Rango Objetivo</label>
+                    <select id="budgetRange">
+                        <!-- Las opciones cambian dinámicamente según la selección -->
+                        <option value="$4M - $7M MXN">$4M a $7M MXN (Compra)</option>
+                        <option value="Más de $7M MXN">Más de $7M MXN (Compra)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeFrame">Plazo o Fecha Estimada</label>
+                    <select id="timeFrame">
+                        <option value="Inmediato (Menos de 30 días)">Inmediato (Menos de 30 días)</option>
+                        <option value="Próximos 3 a 6 meses">Próximos 3 a 6 meses</option>
+                        <option value="Evento planeado para este año">Evento planeado para este año (2026)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-premium btn-submit">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Evaluar Requerimientos
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- BOTÓN FLOTANTE GENERAL DE INTERCONEXIÓN -->
+<a href="https://wa.me/526631220557?text=Hola!%20Me%20interesa%20recibir%20informaci%C3%B3n%20sobre%20el%20cat%C3%A1logo%20inmobiliario%20y%20de%20eventos." class="sticky-whatsapp" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- MODAL DE DESCRIPCIÓN PREMIUM -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card" id="modalCard">
+        <div class="modal-close" onclick="closeDetails()"><i class="fa-solid fa-xmark"></i></div>
+        <div class="modal-gallery" id="modalGallery">
+            <div class="gallery-track" id="galleryTrack"></div>
+            <div class="gallery-arrow gallery-prev" onclick="galleryMove(-1)"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="gallery-arrow gallery-next" onclick="galleryMove(1)"><i class="fa-solid fa-chevron-right"></i></div>
+            <div class="gallery-thumbs" id="galleryDots"></div>
+            <div class="gallery-counter" id="galleryCounter">1 / 4</div>
+        </div>
+        <div class="prod-title" id="modalTitle">Título Producto</div>
+        <div class="prod-location" id="modalPrice" style="color: var(--neon-cyan); font-weight: 800; font-size: 15pt;">Precio</div>
+        <div class="prod-specs" id="modalSpecs" style="margin-bottom: 15px;">Especificaciones</div>
+        <div class="modal-desc" id="modalDescription">Descripción detallada.</div>
+        <a href="#" class="btn-premium btn-whatsapp" id="modalWhatsAppBtn" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad
+        </a>
+    </div>
+</div>
+
+<script>
+    // --- MOTOR DE PARTÍCULAS INTERACTIVAS (CANVAS) ---
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.speedY = Math.random() * -0.5 - 0.1;
+            this.alpha = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.y < 0) {
+                this.reset();
+                this.y = canvas.height;
+            }
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = Math.random() > 0.5 ? '#7b2cff' : '#00f3ff';
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        const count = Math.min(Math.floor(window.innerWidth / 15), 120);
+        for (let i = 0; i < count; i++) particles.push(new Particle());
+    }
+    initParticles();
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // --- ADAPTACIÓN DINÁMICA DEL PRESUPUESTO EN EL CUESTIONARIO ---
+    function adaptBudgetOptions() {
+        const type = document.getElementById('searchType').value;
+        const budgetSelect = document.getElementById('budgetRange');
+        budgetSelect.innerHTML = '';
+
+        if (type === "Comprar Casa") {
+            budgetSelect.innerHTML = `
+                <option value="$3M - $5M MXN">$3M a $5M MXN</option>
+                <option value="$5M - $7M MXN">$5M a $7M MXN</option>
+                <option value="Más de $7M MXN">Más de $7M MXN</option>
+            `;
+        } else if (type === "Rentar Casa") {
+            budgetSelect.innerHTML = `
+                <option value="$15K - $22K MXN">$15K a $22K MXN / Mes</option>
+                <option value="$22K - $30K MXN">$22K a $30K MXN / Mes</option>
+                <option value="Más de $30K MXN">Más de $30K MXN / Mes</option>
+            `;
+        } else if (type === "Reservar Jardín") {
+            budgetSelect.innerHTML = `
+                <option value="$10K - $18K MXN">$10K a $18K MXN por Evento</option>
+                <option value="$18K - $28K MXN">$18K a $28K MXN por Evento</option>
+                <option value="Más de $28K MXN">Más de $28K MXN por Evento</option>
+            `;
+        }
+    }
+
+    // --- INTERACCIONES MEDIANTE GSAP ---
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalCard = document.getElementById('modalCard');
+
+    // --- ESTADO DE LA GALERÍA ---
+    let galleryImages = [];
+    let galleryIndex = 0;
+    const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop';
+
+    function renderGallery() {
+        const track = document.getElementById('galleryTrack');
+        const dotsWrap = document.getElementById('galleryDots');
+        track.innerHTML = galleryImages.map((url, i) =>
+            `<img src="${url}" alt="Imagen ${i + 1}" onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">`
+        ).join('');
+        dotsWrap.innerHTML = galleryImages.map((_, i) =>
+            `<div class="gallery-dot${i === 0 ? ' active' : ''}" onclick="galleryGoTo(${i})"></div>`
+        ).join('');
+        updateGalleryPosition();
+    }
+
+    function updateGalleryPosition() {
+        const track = document.getElementById('galleryTrack');
+        track.style.transform = `translateX(-${galleryIndex * 100}%)`;
+        document.getElementById('galleryCounter').innerText = `${galleryIndex + 1} / ${galleryImages.length}`;
+        document.querySelectorAll('.gallery-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === galleryIndex);
+        });
+    }
+
+    function galleryMove(direction) {
+        galleryIndex = (galleryIndex + direction + galleryImages.length) % galleryImages.length;
+        updateGalleryPosition();
+    }
+
+    function galleryGoTo(i) {
+        galleryIndex = i;
+        updateGalleryPosition();
+    }
+
+    function openDetails(title, price, description, param1, param2, images) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalDescription').innerText = description;
+
+        galleryImages = Array.isArray(images) ? images : [images];
+        galleryIndex = 0;
+        renderGallery();
+        
+        if(param2 === "Pax") {
+            document.getElementById('modalSpecs').innerHTML = `<span><i class="fa-solid fa-users"></i> Capacidad: ${param1} Personas</span>`;
+        } else {
+            document.getElementById('modalSpecs').innerHTML = `<span><i class="fa-solid fa-bed"></i> ${param1} Rec.</span> <span><i class="fa-solid fa-bath"></i> ${param2} Baños</span>`;
+        }
+        
+        const msg = encodeURIComponent(`Hola JA Inmobiliaria & Eventos, me interesa consultar detalles e inventario sobre: ${title} (${price}).`);
+        document.getElementById('modalWhatsAppBtn').href = `https://wa.me/526631220557?text=${msg}`;
+
+        modalOverlay.style.display = 'flex';
+        gsap.fromTo(modalOverlay, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+        gsap.fromTo(modalCard, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.2)" });
+    }
+
+    function closeDetails() {
+        gsap.to(modalCard, { scale: 0.85, opacity: 0, duration: 0.3, ease: "power2.in" });
+        gsap.to(modalOverlay, { opacity: 0, duration: 0.3, onComplete: () => { modalOverlay.style.display = 'none'; } });
+    }
+
+    // Navegación con teclado (flechas izquierda/derecha) cuando el modal está abierto
+    document.addEventListener('keydown', (e) => {
+        if (modalOverlay.style.display === 'flex') {
+            if (e.key === 'ArrowRight') galleryMove(1);
+            if (e.key === 'ArrowLeft') galleryMove(-1);
+            if (e.key === 'Escape') closeDetails();
+        }
+    });
+
+    // --- PROCESAMIENTO DEL CUESTIONARIO COMPUESTO ---
+    function sendForm(e) {
+        e.preventDefault();
+        const name = document.getElementById('clientName').value;
+        const type = document.getElementById('searchType').value;
+        const budget = document.getElementById('budgetRange').value;
+        const timeframe = document.getElementById('timeFrame').value;
+
+        const message = encodeURIComponent(`¡Hola JA Inmobiliaria & Eventos! Mi nombre es ${name}. He completado el perfilador de requerimientos:\n\n- Servicio: ${type}\n- Rango de presupuesto: ${budget}\n- Plazo proyectado: ${timeframe}\n\nQuedo a la espera de sus propuestas premium.`);
+        window.open(`https://wa.me/526631220557?text=${message}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
